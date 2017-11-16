@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 文字渲染</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    $(function () {
+
+        var canvas = $("#canvas")[0];
+        var context = canvas.getContext("2d");
+        canvas.width = 800;
+        canvas.height = 800;
+
+        context.font = "bold 40px Arial";
+        var fontColor = context.createLinearGradient(0,0,800,0);
+        fontColor.addColorStop(0,"yellow");
+        fontColor.addColorStop(1,"red");
+//        context.fillStyle = "#058";
+        context.fillStyle = fontColor;
+        context.strokeStyle = "black";
+        context.lineWidth =2 ;
+        var msg = "学习web前端，学习HTML,CSS,JS!";
+        context.fillText(msg,40,100);
+        context.strokeText(msg,40,100);
+        context.strokeStyle = "red";
+        context.strokeText("学习web前端，学习HTML,CSS,JS!",40,200);
+        context.strokeStyle = "green";
+        context.fillText("学习web前端，学习HTML,CSS,JS!",40,300,300);
+
+
+        context.textAlign;
+        context.textBaseline;
+    })
+
+
+</script>
+</body>
+</html>

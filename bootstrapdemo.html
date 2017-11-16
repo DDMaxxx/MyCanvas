@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery UI</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+    <script src="jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#date").datepicker();
+            var b ={
+                name : "aaaa",
+                type:"bbb"
+            };
+            for(var a in b){
+                console.log(b[a]);
+            }
+
+        })
+    </script>
+    <style>
+        .newop{
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<input type="text" name="date" id="date" class="newop">
+
+</body>
+</html>

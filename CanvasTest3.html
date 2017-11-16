@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 放大镜的实现</title>
+    <link rel="stylesheet" href="css/reset.css">
+</head>
+<body style="background-color: black">
+
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<input type="range" id="scale-range" min="0.5" max="3" step="0.01" value="1.0"  style="width: 800px;margin: 20px auto;display: block" >
+<canvas id="waterMark"  style=" margin: 0px auto;  display:none;"></canvas>
+<!--<iframe seamless src="http://www.baidu.com"></iframe>-->
+
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    var canvas = $("#canvas")[0];
+    var offcanvas = $("#waterMark")[0];
+    var context = canvas.getContext("2d");
+    var offcontext = offcanvas.getContext("2d");
+    var img = new Image();
+    var $slider = $("#scale-range");
+    var isDown = false;
+
+    $(function () {
+
+        canvas.width = 978; //
+        canvas.height = 550;
+
+        changev();
+    })
+
+   canvas.onmousedown = function (e) {
+        e.preventDefault();
+        isDown = true;
+        var point = windowToCanvas(e.clientX,e.clientY);
+       changev(point);
+   }
+
+  canvas.onmouseup = function (e) {
+      e.preventDefault();
+      isDown = false ;
+      changev();
+  }
+
+  canvas.onmousemove = function (e) {
+      e.preventDefault();
+      if (isDown){
+        var point = windowToCanvas(e.clientX,e.clientY);
+        changev(point);
+      }
+  }
+
+
+   function windowToCanvas(x, y) {
+        var bbox = canvas.getBoundingClientRect();
+       return {x:x-bbox.left,y:y-bbox.top};
+   }
+
+    function changev(point) {
+        img.src = 'img/timg.jpg';
+        drawImg(point);
+    }
+
+    function drawImg(point) {
+        img.onload = function () {
+            offcanvas.width = img.naturalWidth;
+            offcanvas.height = img.naturalHeight;
+            var offsale = offcanvas.width/canvas.width;
+
+            context.clearRect(0,0,canvas.width,canvas.height);
+            context.save();
+            context.drawImage(img,0,0,canvas.width,canvas.height);
+
+            if (point){
+                var pointX = point.x*offsale;
+                var pointY = point.y*offsale;
+
+                var radius = 150;
+                offcontext.beginPath();
+                offcontext.arc(pointX,pointY,radius,0,2*Math.PI);
+                offcontext.strokeStyle = "blue";
+                offcontext.lineWidth = 3;
+                offcontext.stroke();
+                offcontext.clip();
+                offcontext.drawImage(img,0,0);
+                context.drawImage(offcanvas,pointX-radius-1,pointY-radius-1,2*(radius+3),2*(radius+3),point.x-radius-1,point.y-radius-1,2*(radius+3),2*(radius+3));
+            }
+
+            context.restore();
+
+
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 弧形</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    $(function () {
+
+        var canvas = $("#canvas")[0];
+        var context = canvas.getContext("2d");
+        canvas.width = 1024;
+        canvas.height = 768;
+
+        for(var i= 0 ; i< 10; i++){
+            context.beginPath();
+            // param 1 圆心x 2 圆心y 3 弧度radius 4 开始pi 5结束pi 6 是否逆时针
+            context.arc(50+i*100,60,40,0,2*Math.PI*(i+1)/10,true);
+            context.closePath();
+            context.fillStyle="#005588"
+            context.fill();
+        }
+
+    })
+
+    function draw(place,cxt){
+        cxt.beginPath();
+        cxt.moveTo(place.p[0].x,place.p[0].y);
+        for(var j=1;j<place.p.length;j++){
+            console.log(place.p[j].x+"=="+place.p[j].y);
+            cxt.lineTo(place.p[j].x,place.p[j].y);
+        }
+        cxt.closePath();
+        cxt.fillStyle = place.color;
+        cxt.fill();
+
+        cxt.lineWidth =5;
+        cxt.strokeStyle = "#fffff";
+        cxt.stroke();
+    }
+
+</script>
+</body>
+</html>

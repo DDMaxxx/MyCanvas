@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 图像处理</title>
+    <link rel="stylesheet" href="css/reset.css">
+</head>
+<body style="background-color: black">
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<input type="range" id="scale-range" min="0.5" max="3" step="0.01" value="1.0"  style="width: 800px;margin: 20px auto;display: block" onmousemove="changev()">
+<canvas id="waterMark"  style=" margin: 0px auto;  display: none;"></canvas>
+
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    var canvas = $("#canvas")[0];
+    var waterMark = $("#waterMark")[0];
+    var context = canvas.getContext("2d");
+    var waterMarkContext = waterMark.getContext("2d");
+    var img = new Image();
+    var $slider = $("#scale-range");
+
+    $(function () {
+
+        canvas.width = 978; //
+        canvas.height = 550;
+
+        changev();
+
+    })
+
+    function changev() {
+        var scale = $slider.val();
+        img.src = 'img/timg.jpg';
+        drawImg(scale);
+    }
+    function drawImg(scale) {
+        img.onload = function () {
+            context.clearRect(0,0,canvas.width,canvas.height);
+            context.save();
+            context.translate(canvas.width*(1-scale)/2,canvas.height*(1-scale)/2);
+//            context.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,0,0,canvas.width*scale,canvas.height*scale)
+            context.drawImage(img,0,0,canvas.width*scale,canvas.height*scale)
+            context.restore();
+
+            context.save();
+            // 绘制水印，跟随
+            if (scale <1){
+                waterMark.width =350*scale;
+                waterMark.height = 100*scale;
+                waterMarkContext.font= "bold "+parseInt(50*scale)+"px 微软雅黑"
+                waterMarkContext.textBaseline = "middle";
+                waterMarkContext.fillStyle = "rgba(255,255,255,0.5)"
+                waterMarkContext.fillText("ZZH的水印",parseInt(50*scale),parseInt(50*scale));
+                context.drawImage(waterMark,canvas.width*(1-scale)/2+canvas.width*scale-waterMark.width,canvas.height-canvas.height*(1-scale)/2-waterMark.height);
+            }else{
+                waterMark.width =350;
+                waterMark.height = 100;
+                waterMarkContext.textBaseline = "middle";
+                waterMarkContext.fillStyle = "rgba(255,255,255,0.5)"
+                waterMarkContext.font= "bold 50px 微软雅黑"
+                waterMarkContext.fillText("ZZH的水印",50,50);
+                context.drawImage(waterMark,canvas.width-waterMark.width,canvas.height-waterMark.height);
+            }
+            context.restore();
+
+
+        }
+    }
+
+    function drawWaterMark(scale) {
+
+    }
+
+</script>
+</body>
+</html>

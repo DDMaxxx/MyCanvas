@@ -1,0 +1,54 @@
+@charset "UTF-8";
+#canvas{
+    margin: 0px auto;
+    display: block;
+}
+.bottom{
+    margin:0 auto;
+    overflow: hidden;
+    margin-top: 20px;
+}
+span{
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+}
+.btn{
+    color: blue;
+    background-color: #ccc ;
+    float: right;
+}
+.btn:hover{
+    background-color: #b3d4fc;
+}
+
+.changeColor{
+    display: inline-block;
+}
+.changeColor span{
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+.changeColor span:hover{
+    border: 5px solid purple;
+}
+.select{
+    border: 5px solid darkred;
+}
+
+.toblack{
+    background-color: black;
+}
+.toyellow{
+    background-color: yellow;
+}
+.togreen{
+    background-color: green;
+}
+
+.place{
+    line-height: 800px;
+}

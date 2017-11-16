@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 红包</title>
+    <style>
+        #content{
+            width: 600px;
+            height: 335px;
+            display: block;
+            margin: 0 auto;
+            position: relative;
+        }
+        #test{
+            width: 600px;
+            height: 335px;
+            display: block;
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+            position: absolute;
+            margin: 0 auto;
+            top:0;
+            left: 0;
+        }
+        #canvas{
+            display: block;
+            position: absolute;
+            margin: 0 auto;
+            top:0;
+            left: 0;
+        }
+        a{
+            display: block;
+            width: 100px;
+            text-align: center;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+    <img id="test" src="img/timg2.jpg" alt="aa">
+    <canvas id="canvas"></canvas>
+</div>
+<a href="javascript:tomore()">放大试试</a>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+
+    var imge;
+    var radius = 30;
+    var context;
+    var timer
+    function extracted(context) {
+        context.clearRect(0,0,600,335);
+        context.save()
+        context.arc(300, 167, radius, 0, 2 * Math.PI);
+        context.clip();
+        context.drawImage(imge, 0, 0, 600, 335);
+        context.restore();
+    }
+
+    function tomore() {
+//        alert("阿里斯顿");
+        timer = setInterval(function () {
+            radius+=parseInt(Math.random()*30)+5;
+            extracted(context);
+            if(radius >= Math.sqrt(300*300+167*167)){
+               clearInterval(timer);
+            }
+        },50);
+    }
+
+    $(function () {
+
+        var canvas = $("#canvas")[0];
+        context = canvas.getContext("2d");
+        canvas.width = 600;
+        canvas.height = 335;
+        imge = new Image();
+        imge.src = "img/timg2.jpg"
+        imge.onload = function () {
+            extracted(context, imge);
+        }
+    })
+
+    function draw(place,cxt){
+        cxt.beginPath();
+        cxt.moveTo(place.p[0].x,place.p[0].y);
+        for(var j=1;j<place.p.length;j++){
+            console.log(place.p[j].x+"=="+place.p[j].y);
+            cxt.lineTo(place.p[j].x,place.p[j].y);
+        }
+        cxt.closePath();
+        cxt.fillStyle = place.color;
+        cxt.fill();
+
+        cxt.lineWidth =5;
+        cxt.strokeStyle = "#fffff";
+        cxt.stroke();
+    }
+
+</script>
+</body>
+</html>

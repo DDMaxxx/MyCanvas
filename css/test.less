@@ -1,0 +1,25 @@
+@charset "UTF-8";
+@test_less : 300px;
+body h1{
+    height: @test_less;
+   .bgcolor;
+    .bordercolor_01(a);
+}
+
+.bgcolor{
+    background-color: red;
+}
+
+.bordercolor(@border_width:10px){
+    border:solid blue @border_width;
+}
+
+.bordercolor_01(a,@border_width:10px){
+    border:solid blue @border_width;
+}
+.bordercolor_01(b,@border_width:10px){
+    border:solid greenyellow @border_width;
+}
+.bordercolor_01(@_,@border_width:10px){
+    border-radius: 30px;
+}

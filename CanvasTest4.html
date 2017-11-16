@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 图像处理</title>
+    <link rel="stylesheet" href="css/reset.css">
+</head>
+<body >
+<div style="margin: 20px auto;text-align: center">
+    <canvas id="canvasa"  width="600" height="335" style="  border: 1px solid #cccccc; display: inline-block;margin-right: 20px"></canvas>
+    <canvas id="canvasb"   width="600" height="335" style="  border: 1px solid #cccccc; display: inline-block;"></canvas>
+</div>
+<div class="control" style="text-align: center;font-size: 20px">
+    <a href="javascript:ooo()">进行滤镜处理</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    var canvasa = $("#canvasa")[0];
+    var canvasb = $("#canvasb")[0];
+    var contexta = canvasa.getContext("2d");
+    var contextb = canvasb.getContext("2d");
+    var img = new Image();
+
+    $(function () {
+        img.src = "img/timg2.jpg";
+        img.onload = function () {
+            contexta.drawImage(img,0,0,canvasa.width,canvasa.height);
+        }
+    })
+
+    var timer;
+    var current = 1;
+    function ooo() {
+        if(timer){
+            clearInterval(timer);
+        }
+        timer =  setInterval(function () {
+            contextb.clearRect(0,0,canvasb.width,canvasb.height)
+            contextb.drawImage(img,0,0,canvasb.width,canvasb.height);
+            var dataB = contextb.getImageData(0,0,canvasb.width,canvasb.height);
+            var data = dataB.data;
+
+            for (var i = 0;i<data.length*current/100;i+=4){
+                red = data[i];
+                green = data[i+1]
+                blue = data[i+2]
+                alpha = data[i+3]
+//                red = Math.abs(255-red);
+//                green = Math.abs(255-green);
+//                blue = Math.abs(255-blue);
+                average = Math.floor((red+green+blue)/3);
+
+//                average = red*0.3 +green*0.59 + blue*0.11;
+                // 灰度过滤
+                data[i] = average;
+                data[i+1] = average;
+                data[i+2] = average;
+            }
+            if(current == 100){
+                clearInterval(timer);
+            }
+            current++;
+            contextb.putImageData(dataB,0,0);
+
+        },50);
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 进阶学习 随机五角星</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    $(function () {
+        var canvas = $("#canvas")[0];
+        var context = canvas.getContext('2d');
+        canvas.width =  800;
+        canvas.height = 600;
+
+        context.fillStyle = 'black';
+        context.fillRect(0,0,canvas.width,canvas.height);
+//        drawStar(context,400,400,50,20,parseInt( Math.random()*90),'black',8,getColor());
+//        drawStar(context,500,500,50,20,parseInt( Math.random()*90),'black',8,getColor());
+//        drawStar(context,100,200,50,20,parseInt( Math.random()*90),'black',8,getColor());
+//        var count = parseInt(Math.random()*50);
+        for (var i =0;i<150;i++){
+            var r = Math.random()*10+10;
+            var x = Math.random()*(canvas.width-2*r)+r;
+            var y = Math.random()*(canvas.height-2*r)+r
+            drawStar(context,x,y,r,r/2,parseInt( Math.random()*90),'black',8,getColor());
+        }
+
+
+    })
+
+    function getColor() {
+        return "rgb("+Math.floor(Math.random()*255+1)+","+parseInt(Math.random()*255+1)+","+parseInt(Math.random()*255+1)+")";
+    }
+
+    function drawStar(context,x,y,r1,r2,random,borderColor,borderWidth,fillColor) {
+        context.beginPath();
+        for(var i=0 ; i<5 ; i++){
+            context.lineTo(Math.cos((18+random+72*i)/180*Math.PI)*r1+x,
+                           -Math.sin((18+random+72*i)/180*Math.PI)*r1+y
+            )
+            context.lineTo(Math.cos((52+random+72*i)/180*Math.PI)*r2+x,
+                           -Math.sin((52+random+72*i)/180*Math.PI)*r2+y
+            )
+        }
+        context.closePath();
+//        context.lineWidth = borderWidth;
+//        context.strokeStyle = borderColor;
+//        context.fillStyle = fillColor;
+        context.lineJoin = 'round';
+
+        context.lineWidth = 3;
+        context.strokeStyle = '#fd5';
+        context.fillStyle = "#fb3";
+
+        context.fill();
+//        context.stroke();
+
+    }
+
+</script>
+</body>
+</html>

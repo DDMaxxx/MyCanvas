@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--<meta name="viewport" context="width = device-width,height = device-height,initial-scale = 1.0,minimum-scale = 1.0,maximum = 1.0,user-scalable = no">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Canvas 学写字</title>
+    <link rel="stylesheet" href="css/canvastest01.css">
+</head>
+<body>
+<canvas id="canvas" ></canvas>
+<div class="bottom">
+    <div class="changeColor" style="float:left">
+        <span class="btncolor toblack"></span>
+        <span class="btncolor toyellow"></span>
+        <span class="btncolor togreen"></span>
+    </div>
+    <span class="btn">清除</span>
+</div>
+<div class="place">
+aaa
+</div>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    var context;
+//    var CANVAS_WIDTH = 600;
+    var CANVAS_WIDTH = Math.min(800,$(window).width()-20);
+//    var CANVAS_HEIGHT = 600;
+    var CANVAS_HEIGHT = Math.min(800,$(window).width()-20);
+    var isDown = false;
+    var canvas = $("#canvas")[0];
+    var lastLoc ;
+    var lastTime =0;
+    var lastWidth= -1;
+    $(".bottom").css("width",CANVAS_WIDTH+"px");
+
+    function drawGrid() {
+        context.save();
+
+        context.lineWidth = 6;
+        context.strokeStyle = "rgb(230,11,9)"
+        context.beginPath();
+        context.moveTo(3, 3);
+        context.lineTo(CANVAS_WIDTH - 3, 3);
+        context.lineTo(CANVAS_WIDTH - 3, CANVAS_HEIGHT - 3);
+        context.lineTo(3, CANVAS_HEIGHT - 3);
+        context.closePath();
+
+        context.stroke();
+
+        context.beginPath();
+        context.setLineDash([10,15]);
+        context.moveTo(0, 0);
+        context.lineTo(CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        context.moveTo(CANVAS_WIDTH / 2, 0);
+        context.lineTo(CANVAS_WIDTH / 2, CANVAS_HEIGHT);
+
+        context.moveTo(CANVAS_WIDTH, 0);
+        context.lineTo(0, CANVAS_HEIGHT);
+
+        context.moveTo(0, CANVAS_HEIGHT / 2);
+        context.lineTo(CANVAS_WIDTH, CANVAS_HEIGHT / 2);
+
+        context.lineWidth = 1;
+        context.stroke();
+
+
+        context.restore();
+    }
+
+    canvas.onmousedown = function (e) {
+        e.preventDefault();
+        isDown = true;
+        lastLoc = windowToCanvas({x:e.clientX,y:e.clientY});
+        lastTime = new Date().getTime();
+    };
+
+    canvas.onmouseout = function (e) {
+        e.preventDefault();
+        isDown = false;
+    };
+    canvas.onmouseup = function (e) {
+        e.preventDefault();
+        isDown = false;
+    };
+    canvas.onmousemove = function (e) {
+        e.preventDefault();
+        if(isDown){
+            drawText({x:e.clientX,y:e.clientY});
+        }
+    };
+    canvas.addEventListener("touchstart",function (e) {
+        e.preventDefault();
+        touch = e.touches[0];
+
+        isDown = true;
+        lastLoc = windowToCanvas({x:touch.pageX,y:touch.pageY-$(document).scrollTop()});
+        lastTime = new Date().getTime();
+    })
+    canvas.addEventListener("touchmove",function (e) {
+        e.preventDefault();
+        if(isDown){
+            touch = e.touches[0];
+            drawText({x:touch.pageX,y:touch.pageY-$(document).scrollTop()});
+        }
+    })
+    canvas.addEventListener("touchend",function (e) {
+        e.preventDefault();
+        isDown = false;
+    })
+
+    var lineColor;
+    var paths = []
+    function drawText(e) {
+        var curLoc = windowToCanvas(e);
+        var curTime = new Date().getTime();
+        var dis = getDis(lastLoc, curLoc);
+        var dist = curTime - lastTime;
+        var lineWidth = getLineWidth(dis, dist)
+//            console.log(speed);
+        context.beginPath();
+        context.moveTo(lastLoc.x, lastLoc.y);
+        context.lineTo(curLoc.x, curLoc.y);
+        context.lineWidth = lineWidth;
+        context.lineCap = "round"
+        context.lineJoin = "round"
+
+        paths.push({
+            startX:lastLoc.x,
+            startY:lastLoc.y,
+            endX:curLoc.x,
+            endY:curLoc.y,
+            lineWidth:lineWidth
+        })
+
+        context.strokeStyle = lineColor || 'blue';
+        context.stroke();
+        lastLoc = curLoc;
+        lastTime = curTime;
+        lastWidth = lineWidth;
+    }
+
+    var RESULT_MAX= CANVAS_WIDTH*3/80;
+//    VAR RESULT_MIN =
+    // 改变宽度
+    function getLineWidth(dis, dist) {
+        var v = dis/dist;
+        var resultWidth ;
+        if( v > 10){
+            resultWidth = 1;
+        }else if(v < 0.1){
+            resultWidth = RESULT_MAX;
+        }else{
+            resultWidth = RESULT_MAX-(v-0.1)/(10-0.1)*(RESULT_MAX-1);
+        }
+        if (lastWidth == -1)
+            return resultWidth;
+        return resultWidth*2/5+lastWidth*3/5;
+    }
+
+    function getDis(loc1, loc2) {
+        return Math.sqrt((loc1.x-loc2.x)*(loc1.x-loc2.x)+(loc1.y-loc2.y)*(loc1.y-loc2.y))
+    }
+
+    function windowToCanvas(e) {
+        var bbox = canvas.getBoundingClientRect();
+        return {x:Math.round(e.x-bbox.left),y:Math.round(e.y-bbox.top)};
+    }
+
+    $(function () {
+        context = canvas.getContext("2d");
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
+        drawGrid();
+
+        $(".btn").click(function () {
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            drawGrid();
+            $(".btncolor").removeClass("select");
+            lineColor = null;
+            paths.length = 0;
+        })
+
+        $(".btncolor").click(function (e) {
+            $(".btncolor").removeClass("select");
+            $(this).addClass("select")
+            lineColor = $(this).css("background-color");
+            drawTextOver(e);
+        })
+
+    })
+    function drawTextOver(e) {
+        context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+        drawGrid();
+        for(var i=0;i<paths.length;i++){
+            var info = paths[i];
+            context.beginPath();
+            context.moveTo(info.startX, info.startY);
+            context.lineTo(info.endX, info.endY);
+            context.lineWidth = info.lineWidth;
+            context.lineCap = "round"
+            context.lineJoin = "round"
+
+            context.strokeStyle = lineColor || 'blue';
+            context.stroke();
+        }
+
+    }
+
+</script>
+</body>
+</html>

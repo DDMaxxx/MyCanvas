@@ -1,0 +1,10 @@
+@charset "UTF-8";
+body h1 {
+  height: 300px;
+  background-color: red;
+  border: solid blue 10px;
+  border-radius: 30px;
+}
+.bgcolor {
+  background-color: red;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas global属性 与 运动的小球</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    var balls = [];
+    $(function () {
+
+        var canvas = $("#canvas")[0];
+        var context = canvas.getContext("2d");
+        canvas.width = 1200;
+        canvas.height = 700;
+
+//        context.globalAlpha = 0.7;
+        context.globalCompositeOperation = "xor";
+        for(var i=0;i<100;i++){
+            var R = Math.floor(Math.random()*255);
+            var G = Math.floor(Math.random()*255);
+            var B = Math.floor(Math.random()*255);
+            var radius = Math.random()*50+20;
+            aBall= {
+                color:"rgb("+R+","+G+","+B+")",
+                radius: radius,
+                x:Math.random()*(canvas.width-2*radius)+radius,
+                y:Math.random()*(canvas.height-2*radius)+radius,
+                vx:(Math.random()*5+5)*Math.pow(-1,Math.floor(Math.random()*100)),
+                vy:(Math.random()*5+5)*Math.pow(-1,Math.floor(Math.random()*100))
+            }
+            balls[i] = aBall;
+        }
+
+        setInterval(
+            function () {
+                drawBall(context);
+                updateBall(canvas.width,canvas.height);
+            }
+        ,50);
+    })
+
+    // 绘制小球
+    function drawBall(cxt) {
+        cxt.clearRect(0,0,cxt.canvas.width,cxt.canvas.height);
+        for(var i=0;i<balls.length;i++){
+            var info = balls[i];
+            cxt.fillStyle =info.color;
+            cxt.save();
+            cxt.beginPath();
+            cxt.arc(info.x,info.y,info.radius,0,2*Math.PI);
+            cxt.fill();
+            cxt.restore();
+        }
+    }
+    // 检测小球状态
+    function updateBall(width, height) {
+        for(var i=0;i<balls.length;i++){
+//            ball[i].vy += g;
+            balls[i].x += balls[i].vx;
+            balls[i].y += balls[i].vy;
+            if (balls[i].x - balls[i].radius <= 0){
+                balls[i].vx = -balls[i].vx;
+                balls[i].x = balls[i].radius;
+            }
+            if (balls[i].x + balls[i].radius >= width){
+                balls[i].vx = -balls[i].vx;
+                balls[i].x = width-balls[i].radius;
+            }
+            if (balls[i].y - balls[i].radius <= 0){
+                balls[i].vy = -balls[i].vy;
+                balls[i].y = balls[i].radius;
+            }
+            if (balls[i].y + balls[i].radius >= height){
+                balls[i].vy = -balls[i].vy;
+                balls[i].y = height-balls[i].radius;
+            }
+        }
+    }
+
+
+</script>
+</body>
+</html>

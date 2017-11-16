@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>一网通支付</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+</head>
+<body>
+
+<script>
+    var HttpPathPay = "http://121.15.180.66:801/NetPayment/BaseHttp.dll?MB_EUserPay";
+
+    //获取参数的方法
+    function UrlSearch() {
+        var name, value;
+        var str = location.href; //取得整个地址栏
+        var num = str.indexOf("?")
+        str = str.substr(num + 1); //取得所有参数   stringvar.substr(start [, length ]
+
+        var arr = str.split("&"); //各个参数放到数组里
+        for (var i = 0; i < arr.length; i++) {
+            num = arr[i].indexOf("=");
+            if (num > 0) {
+                name = arr[i].substring(0, num);
+                value = arr[i].substr(num + 1);
+                this[name] = value;
+            }
+        }
+    }
+
+    function getRootPath() {
+        //获取当前网址，如： http://localhost:8083/proj/meun.jsp
+        var curWwwPath = window.document.location.href;
+        //获取主机地址之后的目录，如： proj/meun.jsp
+        var pathName = window.document.location.pathname;
+        var pos = curWwwPath.indexOf(pathName);
+        //获取主机地址，如： http://localhost:8083
+        var localhostPath = curWwwPath.substring(0, pos);
+        //获取带"/"的项目名，如：/proj
+        var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
+        return (localhostPath + projectName);
+    }
+
+    var Request = new UrlSearch(); //实例化
+
+    /*
+     需要传过来的参数
+     orderNo 订单号，一天之内不重复
+     amount  金额 固定2位小数  xxxx.xx
+     */
+
+    $.ajax({
+        type: "POST",
+        dataType: "html",
+        //async : false,
+        url: getRootPath() + "/YWTPay/YWTPay",  // 待修改为正式项目 的Url
+        data: {
+            orderId: Request.orderNo,
+            txnAmt: Request.amount
+        },
+        success: function (res) {
+            $('html').html(res);  //替换html 为自动跳转的隐藏表单页，跳转到银行支付页
+        },
+        error: function (data, text) {
+            if (text == 'timeout') {
+                console.log('timeout');
+            } else {
+                console.log('error');
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

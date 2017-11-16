@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas clip的应用 移动</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    var clipdes = {x:400,y:350,vx:Math.random()*15+15,vy:Math.random()*15+15,radius:150};
+    var context;
+    $(function () {
+        var canvas = $("#canvas")[0];
+        context = canvas.getContext("2d");
+        canvas.width = 800;
+        canvas.height = 700;
+
+        drawClip(context);
+    })
+
+    function drawClip(cxt) {
+        cxt.save();
+        cxt.globalAlpha = 0.1;
+        cxt.clearRect(0,0,800,700);
+        cxt.beginPath();
+        cxt.fillStyle = "black";
+        cxt.fillRect(0,0,800,700);
+        cxt.globalAlpha =1;
+        cxt.beginPath();
+        cxt.arc(clipdes.x,clipdes.y,clipdes.radius,0,2*Math.PI);
+        cxt.clip();
+        //在clip 的区域内显示内容
+        cxt.fillStyle = "white"
+//        if(cxt.isPointInPath(x,y)){
+//            isDown = true;
+//
+//        }
+        cxt.fill();
+
+        cxt.beginPath();
+        cxt.font = "200px 微软雅黑"
+        cxt.textAlign = "center";
+        cxt.textBaseline = "middle"
+        cxt.fillStyle = "blue";
+        cxt.fillText("Canvas",400,350);
+        cxt.fillText("Canvas",400,150);
+        cxt.fillText("Canvas",400,550);
+
+        cxt.canvas.addEventListener("mousedown",actiondown);
+        cxt.canvas.addEventListener("mousemove",actionmove);
+        cxt.canvas.addEventListener("mouseup",actionup);
+
+        cxt.restore();
+    }
+    var x;
+    var y;
+    var disx;
+    var disy;
+    var isDown = false;
+    function actiondown(event) {
+       x = event.clientX - context.canvas.getBoundingClientRect().left;
+       y = event.clientY - context.canvas.getBoundingClientRect().top;
+        if (x > clipdes.x-clipdes.radius && x< clipdes.x+clipdes.radius){
+            if (y > clipdes.y-clipdes.radius && y< clipdes.y+clipdes.radius){
+                disx = clipdes.x -x;
+                disy = clipdes.y -y;
+                isDown = true;
+            }
+        }
+    }
+    function actionmove(event) {
+        x = event.clientX - context.canvas.getBoundingClientRect().left;
+        y = event.clientY - context.canvas.getBoundingClientRect().top;
+        if(isDown){
+            clipdes.x = x+disx;
+            clipdes.y = y+disy;
+            drawClip(context);
+        }
+
+    }
+    function actionup(event) {
+        x = event.clientX - context.canvas.getBoundingClientRect().left;
+        y = event.clientY - context.canvas.getBoundingClientRect().top;
+        isDown = false;
+    }
+
+
+
+
+
+
+</script>
+</body>
+</html>

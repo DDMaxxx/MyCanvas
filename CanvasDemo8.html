@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 画一轮弯月</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    $(function () {
+
+        var canvas = $("#canvas")[0];
+        var context = canvas.getContext("2d");
+        canvas.width = 800;
+        canvas.height = 800;
+
+//        context.strokeStyle = 'red';
+//        context.fillStyle = "yellow";
+//        context.lineWidth = 5;
+//        context.arc(400,400,300,0.5*Math.PI,1.5*Math.PI,true);
+//        context.arcTo(1200,400,400,700,(400-100)*getBias(400,100,1200,400)/(1200-400));
+//
+//        context.fill();
+//        context.stroke();
+
+        drawMoon(context,2,400,400,100,-30);
+
+    })
+
+    function getBias(x1, y1, x2, y2) {
+        return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+    }
+    /**
+     * 绘制月亮
+     * @param cxt  context
+     * @param re  内圆参考偏移量
+     * @param x     位置x
+     * @param y     位置y
+     * @param r     外圆半径
+     * @param rota  旋转
+//     */
+    function drawMoon(cxt,re,x,y,r,rota) {
+        cxt.save();
+        cxt.translate(x,y);
+        cxt.scale(r,r);
+        cxt.rotate(rota/180*Math.PI);
+        buildMoonPath(cxt,re);
+        cxt.fillStyle = "yellow";
+        cxt.fill();
+//        cxt.stroke()
+        cxt.restore();
+    }
+
+    function buildMoonPath(cxt,re){
+        cxt.beginPath();
+        cxt.arc(0,0,1,0.5*Math.PI,1.5*Math.PI,true);
+//        cxt.moveTo(0,-1)  //由于上面一个路径的结束点，刚好是 0，-1 ，这里可以省略
+        cxt.arcTo(re,0,0,1,getBias(0,-1,re,0)/re);
+        cxt.closePath();
+    }
+</script>
+</body>
+</html>

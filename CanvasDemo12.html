@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas clip的应用</title>
+
+</head>
+<body>
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    var clipdes = {x:400,y:350,vx:Math.random()*15+15,vy:Math.random()*15+15,radius:Math.random()*70+100};
+    var context;
+    $(function () {
+        var canvas = $("#canvas")[0];
+        context = canvas.getContext("2d");
+        canvas.width = 800;
+        canvas.height = 700;
+
+//        setInterval(function () {
+//
+//        },50);
+
+
+        setInterval(function () {
+            drawClip(context);
+            update(context);
+        },50);
+    })
+
+    function drawClip(cxt) {
+        cxt.save();
+        cxt.clearRect(0,0,800,700);
+        cxt.beginPath();
+        cxt.fillStyle = "black";
+        cxt.fillRect(0,0,800,700);
+
+        cxt.beginPath();
+        cxt.arc(clipdes.x,clipdes.y,clipdes.radius,0,2*Math.PI);
+        cxt.clip();
+        //在clip 的区域内显示内容
+        cxt.fillStyle = "white"
+        if(context.isPointInPath(x,y)){
+            cxt.fillStyle = "green";
+        }
+        cxt.fill();
+
+        cxt.beginPath();
+        cxt.font = "200px 微软雅黑"
+        cxt.textAlign = "center";
+        cxt.textBaseline = "middle"
+        cxt.fillStyle = "blue";
+        cxt.fillText("Canvas",400,350);
+        cxt.fillText("Canvas",400,150);
+        cxt.fillText("Canvas",400,550);
+
+        cxt.canvas.addEventListener("mousemove",detact);
+
+        cxt.restore();
+    }
+    var x;
+    var y;
+    function detact(event) {
+       x = event.clientX - context.canvas.getBoundingClientRect().left;
+       y = event.clientY - context.canvas.getBoundingClientRect().top;
+
+
+    }
+
+    function update(cxt) {
+        clipdes.x += clipdes.vx;
+        clipdes.y += clipdes.vy;
+
+        if (clipdes.x <= clipdes.radius){
+            clipdes.x = clipdes.radius;
+            clipdes.vx = -clipdes.vx;
+        }
+
+        if (clipdes.x >= 800-clipdes.radius){
+            clipdes.x = 800-clipdes.radius;
+            clipdes.vx = -clipdes.vx;
+        }
+        if (clipdes.y <= clipdes.radius){
+            clipdes.y = clipdes.radius;
+            clipdes.vy = -clipdes.vy;
+        }
+
+        if (clipdes.y >= 700-clipdes.radius){
+            clipdes.y = 700-clipdes.radius;
+            clipdes.vy = -clipdes.vy;
+        }
+
+    }
+
+
+
+
+</script>
+</body>
+</html>

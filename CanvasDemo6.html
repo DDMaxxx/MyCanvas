@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas 进阶学习 图形变换</title>
+
+</head>
+<body>
+<!--<marquee>Canvas 的学习 绘制 </marquee>-->
+<canvas id="canvas"  style=" margin: 0px auto; border: 1px solid #cccccc; display: block;"></canvas>
+
+<script src="https://code.jquery.com/jquery-2.0.0.js"></script>
+<script>
+    $(function () {
+        var canvas = $("#canvas")[0];
+        var context = canvas.getContext('2d');
+        canvas.width =  800;
+        canvas.height = 600;
+
+        // 线性渐变
+        var gb = context.createLinearGradient(0,0,0,canvas.height);
+        // 弧形渐变
+        gb = context.createRadialGradient(400,600,0,400,600,600);
+
+        gb.addColorStop(1,"black");
+        gb.addColorStop(0,"#035");
+        context.fillStyle = gb;
+        context.fillRect(0,0,canvas.width,canvas.height);
+
+
+        for (var i =0;i<150;i++){
+            var r = Math.random()*5+5;
+            var x = Math.random()*(canvas.width-2*r)+r;
+            var y = Math.random()*(canvas.height-2*r)*0.65+r;
+//            drawStar(context,x,y,r,r/2,parseInt( Math.random()*90),'black',8,getColor());
+            drawStarStar(context,x,y,r,parseInt(Math.random()*360));
+        }
+
+//        drawStarStar(context,100,100,0,30);
+//        drawStarStar(context,200,200,0,60);
+        // 绘制月亮
+        drawMoon(context,2,600,150,50,-30);
+
+        drawLand(context);
+    })
+
+    function drawLand(cxt) {
+        cxt.save();
+        cxt.beginPath();
+        cxt.moveTo(0,400);
+        cxt.bezierCurveTo(250,250,450,700,800,400)
+        cxt.lineTo(800,800);
+        cxt.lineTo(0,800);
+        cxt.closePath();
+        var landColor = cxt.createLinearGradient(0,800,0,0);
+        landColor.addColorStop(0,'#030');
+        landColor.addColorStop(1,'#580');
+        cxt.fillStyle = landColor;
+        cxt.fill();
+        cxt.restore();
+    }
+
+    /**
+     * 绘制月亮
+     * @param cxt  context
+     * @param re  内圆参考偏移量
+     * @param x     位置x
+     * @param y     位置y
+     * @param r     外圆半径
+     * @param rota  旋转
+     //     */
+    function drawMoon(cxt,re,x,y,r,rota) {
+        cxt.save();
+        cxt.translate(x,y);
+        cxt.scale(r,r);
+        cxt.rotate(rota/180*Math.PI);
+        buildMoonPath(cxt,re);
+        cxt.fillStyle = "#fd5";
+        cxt.fill();
+//        cxt.stroke()
+        cxt.restore();
+    }
+
+    function buildMoonPath(cxt,re){
+        cxt.beginPath();
+        cxt.arc(0,0,1,0.5*Math.PI,1.5*Math.PI,true);
+        cxt.moveTo(0,-1)
+        cxt.arcTo(re,0,0,1,getBias(0,-1,re,0)/re);
+        cxt.closePath();
+    }
+
+    function getBias(x1, y1, x2, y2) {
+        return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+    }
+
+    function getColor() {
+        return "rgb("+Math.floor(Math.random()*255+1)+","+parseInt(Math.random()*255+1)+","+parseInt(Math.random()*255+1)+")";
+    }
+
+    /**
+     * 绘制标准星星的路径
+     * @param cxt
+     */
+    function drawStarPath(cxt) {
+        cxt.beginPath();
+        for(var i=0 ; i<5 ; i++){
+            cxt.lineTo(Math.cos((18+72*i)/180*Math.PI),
+                -Math.sin((18+72*i)/180*Math.PI)
+            )
+            cxt.lineTo(Math.cos((52+72*i)/180*Math.PI)*0.5,
+                -Math.sin((52+72*i)/180*Math.PI)*0.5
+            )
+        }
+        cxt.closePath();
+    }
+
+    function drawStarStar(cxt, x, y, R, rot) {
+        cxt.save();
+        // 注意顺序
+        cxt.translate(x,y);  // 位移
+        cxt.rotate(rot/180*Math.PI);    // 旋转
+        cxt.scale(R,R);     // 缩放
+        drawStarPath(cxt);
+
+        cxt.lineJoin = 'round';
+
+//        cxt.lineWidth = 3;
+//        cxt.strokeStyle = '#fd5';
+        cxt.fillStyle = "#fb3";
+        cxt.fill();
+//        cxt.stroke();
+        cxt.restore();
+    }
+
+
+    function drawStar(context,x,y,r1,r2,random,borderColor,borderWidth,fillColor) {
+        context.beginPath();
+        for(var i=0 ; i<5 ; i++){
+            context.lineTo(Math.cos((18+random+72*i)/180*Math.PI)*r1+x,
+                           -Math.sin((18+random+72*i)/180*Math.PI)*r1+y
+            )
+            context.lineTo(Math.cos((52+random+72*i)/180*Math.PI)*r2+x,
+                           -Math.sin((52+random+72*i)/180*Math.PI)*r2+y
+            )
+        }
+        context.closePath();
+//        context.lineWidth = borderWidth;
+//        context.strokeStyle = borderColor;
+//        context.fillStyle = fillColor;
+        context.lineJoin = 'round';
+
+        context.lineWidth = 3;
+        context.strokeStyle = '#fd5';
+        context.fillStyle = "#fb3";
+
+        context.fill();
+//        context.stroke();
+
+    }
+
+</script>
+</body>
+</html>
